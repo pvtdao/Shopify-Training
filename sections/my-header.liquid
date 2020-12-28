@@ -1,0 +1,338 @@
+<div class="header">
+    <div class="header-main">
+        {% if section.settings.logo_align == "center"%}
+            <div class="header-left">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <form class="header-search" action="/search" style="padding: 0; border: 1px solid rgba(0,0,0,.1);">
+                        <input
+                        type="text"
+                        placeholder="Type here..."
+                        name="q"
+                        value="{{ search.terms | escape }}"
+                        />
+                        <button class="bnt-search">
+                            {% include 'icon-search' %}
+                        </button>
+                    </form>
+                </div>
+                <div class="icon-hamburger hide-on-desktop" onclick="menuActive();">
+                    {% include 'icon-hamburger'%}
+                </div>
+            </div>
+            <div class="header__logo">
+                {% if section.settings.logo %}
+                    {%- assign img_url = section.settings.logo | img_url: '1x1' | replace: '_1x1', '_{width}x.' -%}
+                    <a href="{{routes.root_url}}" class="header__logo-img">
+                        {% capture logo_alt %}
+                            {{ section.settings.logo.alt | default: shop.name}}
+                        {% endcapture %}
+                        <img class=""
+                            src="{{ section.settings.logo | img_url: '300x300' }}"
+                            data-src="{{ img_url }}"
+                            data-widths="[180, 360, 540, 720, 900, 1080, 1296, 1512, 1728, 2048]"
+                            data-aspectratio="{{ section.settings.logo.aspect_ratio }}"
+                            data-sizes="auto"
+                            alt="{{ logo_alt | escape }}"
+                            style="max-width: {{ section.settings.logo_width }}px">
+                        <noscript>
+                            {% capture img_size %}
+                                {{ section.settings.logo_width | escape}}x
+                            {% endcapture %}
+                            <img src="{{ section.settings.logo | img_url: img_size }}"
+                                srcset="{{ section.settings.logo | img_url: img_size }} 1x, {{ section.settings.logo | img_url: img_size, scale: 2 }} 2x"
+                                alt="{{ section.settings.logo.alt | default: shop.name }}"
+                                style="max-width: {{ section.settings.logo_width }}px;">
+                        </noscript>
+                    </a>
+                {% else %}
+                    <a href="{{routes.root_url}}" class="header__logo-link">{{shop.name}}</a>
+                {% endif %}
+            </div>
+        {% else %}
+            {% assign right-class = "header-right-wide" %}
+            <div class="header-set-left" style="text-align: center">
+                <div class="header__logo">
+                    {% if section.settings.logo %}
+                        {%- assign img_url = section.settings.logo | img_url: '1x1' | replace: '_1x1', '_{width}x.' -%}
+                        <a href="{{routes.root_url}}" class="header__logo-img">
+                            {% capture logo_alt %}
+                                {{ section.settings.logo.alt | default: shop.name}}
+                            {% endcapture %}
+                            <img class=""
+                                src="{{ section.settings.logo | img_url: '300x300' }}"
+                                data-src="{{ img_url }}"
+                                data-widths="[180, 360, 540, 720, 900, 1080, 1296, 1512, 1728, 2048]"
+                                data-aspectratio="{{ section.settings.logo.aspect_ratio }}"
+                                data-sizes="auto"
+                                alt="{{ logo_alt | escape }}"
+                                style="max-width: {{ section.settings.logo_width }}px">
+                            <noscript>
+                                {% capture img_size %}
+                                    {{ section.settings.logo_width | escape}}x
+                                {% endcapture %}
+                                <img src="{{ section.settings.logo | img_url: img_size }}"
+                                    srcset="{{ section.settings.logo | img_url: img_size }} 1x, {{ section.settings.logo | img_url: img_size, scale: 2 }} 2x"
+                                    alt="{{ section.settings.logo.alt | default: shop.name }}"
+                                    style="max-width: {{ section.settings.logo_width }}px;">
+                            </noscript>
+                        </a>
+                    {% else %}
+                        <a href="{{routes.root_url}}" class="header__logo-link">{{shop.name}}</a>
+                    {% endif %}
+                </div>
+                <div class="header-left">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <form class="header-search" action="/search" style="padding: 0; border: 1px solid rgba(0,0,0,.1);">
+                            <input
+                            type="text"
+                            placeholder="Type here..."
+                            name="q"
+                            value="{{ search.terms | escape }}"
+                            />
+                            <button class="bnt-search">
+                                {% include 'icon-search' %}
+                            </button>
+                        </form>
+                    </div>     
+                    <div class="icon-hamburger hide-on-desktop" onclick="menuActive();">
+                        {% include 'icon-hamburger'%}
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+        
+        <div class="header-right {{ right-class }}">
+            <div class="header-right-item">
+                <a href="" class="header-item-link">Log in </a>&nbsp;/&nbsp;<a href="" class="header-item-link">Sign up</a>
+            </div>
+            <div class="header-right-item">
+                <div class="bag-container">
+                    <a href="" class="">
+                        <svg aria-hidden="true" focusable="false" role="presentation" class="icon icon-cart" viewBox="0 0 37 40">
+                            <path d="M36.5 34.8L33.3 8h-5.9C26.7 3.9 23 .8 18.5.8S10.3 3.9 9.6 8H3.7L.5 34.8c-.2 1.5.4 2.4.9 3 .5.5 1.4 1.2 3.1 1.2h28c1.3 0 2.4-.4 3.1-1.3.7-.7 1-1.8.9-2.9zm-18-30c2.2 0 4.1 1.4 4.7 3.2h-9.5c.7-1.9 2.6-3.2 4.8-3.2zM4.5 35l2.8-23h2.2v3c0 1.1.9 2 2 2s2-.9 2-2v-3h10v3c0 1.1.9 2 2 2s2-.9 2-2v-3h2.2l2.8 23h-28z">
+                            </path>
+                        </svg>
+                    </a>
+                    <span>0</span>
+                </div>
+                
+                <div class="like-container">
+                    <a href="/cart" class="">
+                        <svg aria-hidden="true" focusable="false" role="presentation" class="icon icon-cart" viewBox="0 0 37 40">
+                            <path d="M36.5 34.8L33.3 8h-5.9C26.7 3.9 23 .8 18.5.8S10.3 3.9 9.6 8H3.7L.5 34.8c-.2 1.5.4 2.4.9 3 .5.5 1.4 1.2 3.1 1.2h28c1.3 0 2.4-.4 3.1-1.3.7-.7 1-1.8.9-2.9zm-18-30c2.2 0 4.1 1.4 4.7 3.2h-9.5c.7-1.9 2.6-3.2 4.8-3.2zM4.5 35l2.8-23h2.2v3c0 1.1.9 2 2 2s2-.9 2-2v-3h10v3c0 1.1.9 2 2 2s2-.9 2-2v-3h2.2l2.8 23h-28z">
+                            </path>
+                        </svg>
+                    </a>
+                    <span data-cart-count>{{cart.item_count}}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="header-menu" id="header-menu-js">
+        {% include 'my-side-nav', linklist: section.settings.main_menu %}
+    </div>
+</div>
+
+<style>
+    .header{
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px 0px 0px 0px;
+    }
+    .header-main{
+        display: flex;
+        justify-content: space-between;
+        {% if section.settings.logo %}
+            align-items: flex-end;
+        {% else %}
+            align-items: center;
+        {% endif %}
+        /* align-items: center; */
+    }
+    .header-right{
+        max-width: 40%;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+    }
+    .header-right-item{
+        padding: 0 2px;
+        margin-left: 10px;
+        display: flex;
+        align-items: center;
+    }
+    .bag-container,
+    .like-container{
+        padding: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+    }
+    .bag-container span,
+    .like-container span{
+        margin: 5px 0 0 5px;
+        display: block;
+    }
+    .header-item-link{
+        text-transform: uppercase;
+        margin-top: 4px;
+        font-size: 14px;
+    }
+    .header-search{
+        padding: 8px 10px;
+        outline: none;
+    }
+    input{
+        border: none;
+        outline: none;
+    }
+    .header__logo{
+    }
+    .header__logo-link{
+        font-size: 30px;
+        font-weight: bold;
+    }
+    .bnt-search{
+        background: none;
+        outline: none;
+        border: none;
+    }
+    .header-right-wide{
+        width: 25%;
+    }
+    .header-menu{
+        text-align: center;
+        padding: 15px 5px 5px 5px;
+    }
+    .icon-hamburger{
+        margin: 0 7px;
+        cursor: pointer;
+    }
+  
+
+    @media only screen and (min-width: 749px){
+        .hide-on-desktop{
+            display: none;
+        }
+    }
+    @media only screen and (max-width: 1300px){
+        .header{
+            padding: 20px 20px 0px 20px;
+        }
+    }
+    @media only screen and (max-width: 750px)  {
+        .header{
+            padding: 0 0 20px 0;
+        }
+        .header-main{
+            flex-direction: column-reverse;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .header-right{
+            min-width: 100%;
+            margin: 0 auto;
+        }
+        .header__logo{
+            margin-bottom: 5px;
+        }
+        .header-menu{
+            display: none;
+            padding: 5px;
+            box-shadow: 0px 10px 9px -5px rgba(0,0,0,.1);
+        }
+        .nav-desktop .nav__item{
+            display: block;
+            border-bottom: 1px solid rgba(0,0,0,.1);
+        }
+        .nav-desktop .nav__item.nav__item:last-child{
+            border: unset;
+        }
+        .header-left{
+            display: flex;
+            align-items: center;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .menu--active{
+            display: block;
+        }
+        
+    }
+</style>
+
+<script>
+    function menuActive(){
+            const menu = document.querySelector("#header-menu-js")
+            menu.classList.toggle("menu--active")
+            // console.log(document.querySelector("#header-menu-js"));
+    }
+</script>
+
+{% schema %}
+{
+    "name": {
+        "en": "My header",
+        "vi": "Đầu trang"
+    },
+    "settings": [
+        {
+            "type": "radio",
+            "id": "logo_align",
+            "label": {
+                "en": "Logo alignment",
+                "vi": "Căn chỉnh logo"
+            },
+            "default": "center",
+            "options": [
+                {
+                    "value": "left",
+                    "label": {
+                        "en": "Left",
+                        "vi": "Trái"
+                    }
+                },
+                {
+                    "value": "center",
+                    "label": {
+                        "en": "Center",
+                        "vi": "Giữa"
+                    }
+                }
+            ]
+        },
+        {
+            "type": "image_picker",
+            "id": "logo",
+            "label": {
+                "en": "Logo image",
+                "vi": "Hình ảnh logo"
+            }
+        },
+        {
+            "type": "range",
+            "id": "logo_width",
+            "label": {
+                "en": "Custom logo width",
+                "vi": "Chiều rộng của logo"
+            },
+            "min": 50,
+            "max": 250,
+            "step": 5,
+            "unit": "px",
+            "default": 100
+        },
+        {
+           "type": "link_list",
+           "id": "main_menu",
+           "label": {
+               "en": "Menu",
+               "vi": "Menu"
+           },
+           "default": "main-menu"
+        }
+        
+    ]
+}
+{% endschema %}

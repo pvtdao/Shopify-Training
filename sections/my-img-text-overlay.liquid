@@ -1,0 +1,364 @@
+{%- if section.settings.layout_hero == 'full-width' and section.settings.hero_height == "adapt" -%}
+    {% if section.settings.image.aspect_ratio == blank %}
+        {% assign min_aspect_ratio = 2.0 %}
+    {% else %}
+        {% assign min_aspect_ratio = section.settings.image.aspect_ratio %}
+    {% endif %}
+    {% assign wrapper_height = 100 | divided_by: min_aspect_ratio %}
+{% endif %}
+
+{% style %}
+    .hero-section {
+        height: {{ wrapper_height }}vw !important;
+    }
+{% endstyle %}
+
+<style>
+    .hero-container {
+        *zoom: 1;
+        max-width: 1200px;
+        margin: 0 auto; 
+    }
+    .hero-container::after{
+        content: '';
+        display: table;
+        clear: both;
+    }
+    .hero-fixed{
+        position: relative;
+    }
+    .hero-fixed::after{
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        background-color: rgba(0, 0, 0, .3);
+        /* background-color: var(--color-image-overlay);
+        opacity: var(--opacity-image-overlay); */
+        z-index: 1;
+    }
+    .hero-fixed__content{
+        overflow: hidden;
+        position: absolute;
+        top: 50%;
+        left: 0;
+        right: 0;
+        z-index: 2;
+        -ms-transform: translateY(-50%);
+        -webkit-transform: translateY(-50%);
+        transform: translateY(-50%);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .hero-text__container{
+        text-align: center;
+        padding: 0 20px;
+        width: 50%;
+    }
+    .hero-title{
+        color: #fff;
+        font-size: 30px;
+        margin-bottom: 0px;
+    }
+    .hero-text p{
+        line-height: 20px;
+        color: #fff;
+        font-size: 18px;
+        margin-bottom: 20px;
+    }
+    
+    @media only screen and (max-width: 1300px){
+        .hero-container{
+            padding: 0 20px;
+        }
+    }
+    @media only screen and (max-width: 750px){
+        .hero-text__container{
+            text-align: center;
+            padding: 0 20px;
+            width: 100%;
+        }
+        .hero-title{
+            font-size: 22px;
+            margin-bottom: 8px;
+        }
+        .hero-text p{
+            font-size: 16px;
+        }
+    }
+</style>
+
+<div class="hero-section" data-section-id="{{ section.id }}" data-section-type="hero-section">
+    {% if section.settings.layout_hero == 'fixed-width' %}
+        <div class="hero-container">
+    {% endif %}
+    {% if section.settings.layout_hero == 'fixed-width' and section.settings.hero_height == "adapt" %}
+        {% assign slide_width = 1090 %}
+        {% assign min_aspect_ratio = section.settings.image.aspect_ratio | default: 2.0 %}
+            <div class="hero-fixed hero--adapt" 
+            data-layout="{{ section.settings.layout_hero }}">
+            {%- assign img_url = section.settings.image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+            {% if section.settings.image.width < max_width %}
+                {% assign slide_width = section.settings.image.width %}
+            {% endif %}
+                <div class="hero-fixed__content">
+                    <div class="hero-text__container">
+                        {% if section.settings.title != blank %}
+                            <h2 class="hero-title">
+                                {{section.settings.title | escape}}
+                            </h2>
+                        {% endif %}
+                        {% if section.settings.text != blank %}
+                        <div class="hero-text">
+                            {{section.settings.text}}
+                        </div>
+                        {% endif %}
+                        {% if section.settings.btn_label != blank and section.settings.btn_link != blank %}
+                            <a href="{{section.settings.btn_link}}" class="btn hero_btn-link">
+                                {{ section.settings.btn_label | escape }}
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+                {% if section.settings.image != blank %}
+                    <img class="hero-fixed-width__image lazyload lazypreload"
+                         data-src="{{ img_url }}"
+                         data-widths="[180, 360, 470, 600, 770, 970, 1060, 1280, 1512, 1728, 2048]"
+                         data-aspectratio="{{ section.settings.image.aspect_ratio }}"
+                         data-sizes="auto"
+                         style="{% if slide_width <= max_width %}
+                                    {% assign min_width = slide_width | times: 100 | devided_by: max_width %}
+                                    min-width: {{ min_width }}%;
+                                {% endif %}
+                                object-position: {{ section.settings.align }};"
+                         alt="{{ section.settings.image.alt | escape }}">
+                        
+                {% else %}
+                    <span>
+                        {% capture current %}{% cycle 1, 2 %}{% endcapture %}
+                        {{ 'lifestyle-' | append: current | placeholder_svg_tag: 'placeholder-svg' }}
+                    </span>
+                {% endif %}
+            </div>
+    {% else %}
+    <div class="hero hero--{{ section.settings.hero_height }} hero-{{ section.id }}{% if section.settings.title != blank or section.settings.text != blank or section.settings.btn_label != blank %} hero__overlay{% endif %} box ratio-container lazyload js"
+    id="Hero-{{ section.id }}"
+    data-layout="{{ section.settings.layout_hero }}"
+    {%- if section.settings.image -%}
+     {% unless section.settings.image.alt == blank %}
+     role="img"
+     aria-label="{{ section.settings.image.alt | escape }}"
+     data-alt="{{ section.settings.image.alt | escape }}"
+     {% endunless %}
+    data-bg="{{ section.settings.image | img_url: '300x300' }}"
+    data-bgset="{% include 'bgset', image: section.settings.image %}"
+    data-sizes="auto"
+    data-parent-fit="cover"
+    style="background-position: {{ section.settings.align }};"
+    data-image-loading-animation
+    {%- endif -%}>
+{%- if section.settings.image == blank -%}
+ <div class="placeholder-background">
+   {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg' }}
+ </div>
+{%- endif -%}
+ <div class="hero__inner">
+   <div class="page-width text-center">
+     {%- if section.settings.title != blank -%}
+       <h2 class="h1 mega-title{% if section.settings.text_size == 'large' %} mega-title--large{% endif %}">{{ section.settings.title | escape }}</h2>
+     {%- endif -%}
+     {%- if section.settings.text != blank -%}
+       <div class="rte-setting mega-subtitle{% if section.settings.text_size == 'large' %} mega-subtitle--large{% endif %}">{{ section.settings.text }}</div>
+     {%- endif -%}
+     {%- if section.settings.btn_label != blank and section.settings.btn_link != blank -%}
+       {%- capture ariaLabel -%}
+         {{- section.settings.btn_label -}}
+         {%- if section.settings.btn_link.type == 'frontpage_link' -%}
+           : {{ 'homepage.general.title' | t -}}
+         {%- elsif section.settings.btn_link.type == 'catalog_link' -%}
+           : {{ 'collections.catalog.title' | t -}}
+         {%- elsif section.settings.btn_link.object.title -%}
+           : {{ section.settings.btn_link.object.title -}}
+         {%- endif -%}
+       {%- endcapture -%}
+
+       <a href="{{ section.settings.btn_link }}"
+         class="btn hero__btn"
+         aria-label="{{ ariaLabel }}">
+         {{- section.settings.button_label | escape -}}
+       </a>
+     {%- endif -%}
+   </div>
+ </div>
+</div>
+<noscript>
+ <div class="hero hero--{{ section.settings.hero_size }}{% if section.settings.title != blank or section.settings.text != blank or section.settings.button_label != blank %} hero__overlay{% endif %}"{% if section.settings.image %}{% unless section.settings.image.alt == blank %} role="img" aria-label="{{ section.settings.image.alt | escape }}"{% endunless %} style="background-image: url('{{ section.settings.image | img_url: '2048x' }}'); background-position: center {{ section.settings.alignment }};"{% endif %}></div>
+</noscript>
+    {% endif %}
+    {% if section.settings.layout_hero == 'fixed-width' %}
+        </div>
+    {% endif %}
+</div>
+
+{% schema %}
+{
+    "name": {
+        "en": "My image text overlay"
+    },
+    "settings": [
+        {
+            "type": "image_picker",
+            "id": "image",
+            "label": {
+                "en": "Image"
+            }
+        },
+        {
+            "type": "select",
+            "id": "align",
+            "label": {
+                "en": "Image alignment"
+            },
+            "default": "center",
+            "options": [
+                {
+                    "value": "top",
+                    "label": {
+                        "en": "Top"
+                    }
+                },
+                {
+                    "value": "center",
+                    "label": {
+                        "en" : "Center"
+                    }
+                },
+                {
+                    "value": "bottom",
+                    "label": {
+                        "en": "Bottom"
+                    }
+                }
+            ]
+        },
+        {
+            "type": "select",
+            "id": "layout_hero",
+            "label": {
+                "en": "layout"
+            },
+            "default": "fixed-width",
+            "options": [
+                {   
+                    "value": "full-width",
+                    "label": {
+                        "en": "Full width"
+                    }
+                },
+                {
+                    "value": "fixed-width",
+                    "label": {
+                        "en": "Fixed width"
+                    }
+                }
+            ]
+        },
+        {
+            "type": "select",
+            "id": "hero_height",
+            "label": {
+                "en": "Section height"
+            },
+            "default": "adapt",
+            "options": [
+                {
+                    "value": "adapt",
+                    "label": {
+                        "en": "Adapt to image"
+                    }
+                },
+                {
+                    "value": "extra-small",
+                    "label": {
+                        "en": "Extra small"
+                    }
+                },
+                {
+                    "value": "small",
+                    "label": {
+                        "en": "Small"
+                    }
+                },
+                {
+                    "value": "medium",
+                    "label": {
+                        "en": "Medium"
+                    }
+                },
+                {
+                    "value": "large",
+                    "label": {
+                        "en": "Large"
+                    }
+                },
+                {
+                    "value": "extra-large",
+                    "label": {
+                        "en": "Extra large"
+                    }
+                }
+            ]
+        },
+        {
+            "type": "text",
+            "id": "title",
+            "default": {
+                "en": "Get extra 30% off"
+            },
+            "label": {
+                "en": "Heading"
+            }
+        },
+        {
+            "type": "richtext",
+            "id": "text",
+            "label": {
+                "en": "Text"
+            },
+            "default": {
+                "en": "<p>Don't miss our need-it-now edit - these styles won't hang around long!</p>"
+            }
+        },
+        
+        {
+            "type": "text",
+            "id": "btn_label",
+            "label": {
+                "en": "Button label"
+            }
+        },
+        {
+            "type": "url",
+            "id": "btn_link",
+            "label": {
+                "en": "Button link"
+            }
+        }
+    ],
+
+    "presets": [
+        {
+            "name": {
+                "en": "My image with text overlay"
+            },
+            "category": {
+                "en": "Image"
+            }
+        }
+    ]
+}
+
+{% endschema %}

@@ -1,0 +1,30 @@
+<ul class="nav-desktop">
+    {% for link in linklists[linklist].links %}
+        <li class="nav__item {% if link.active %}nav__item--active{% endif %}">
+            <a href="{{link.url}}" class="nav__item-link">{{link.title}}</a>
+        </li>
+    {% endfor %}
+</ul>
+
+<style>
+    .nav-desktop{
+        /* display: flex; */
+        justify-content: center;
+    }
+    .nav__item{
+        display: inline-block;
+    }
+    .nav__item--active{
+        text-decoration: underline;
+    }
+    .nav__item-link{
+        display: block;
+        padding: 10px;
+    }
+    .nav__item-link:hover{
+        text-decoration: underline;
+    }
+    @media only screen and (max-width: 750px){
+        
+    }
+</style>

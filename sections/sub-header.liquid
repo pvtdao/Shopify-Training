@@ -1,0 +1,207 @@
+{%- comment -%}
+    {% assign my_variable = 'apples' %}
+    <!-- Cái snippet_variable là biến sẽ gọi lại được bên snippet và nó có giá trị bằng với giá trị của my_variable -->
+    {% render 'my-snippet', snippet_variable: my_variable, my_other_variable: 'oranges' %}
+
+    <!-- pass variable với with
+        Đưa cái biến đó vô rồi as [tên muốn đặt]
+        Rồi bên snippet chỉ cần gọi lại cái tên là được
+    -->
+    {% render 'my-snippet' with my_variable as cc%}
+
+{%- endcomment -%}
+
+
+    {% if section.settings.align_text == "right" %}
+        {% assign sub-header-classes = "align-right" %}
+    {% elsif section.settings.align_text == "left" %}
+        {% assign sub-header-classes = "align-left" %}
+    {% else %}
+        {% assign sub-header-classes = "align-center" %}
+    {% endif %}
+
+    {% render 'sub-header-snippet' with sub-header-classes as sub-header-classes%}
+
+
+    <style>
+        .align-center{
+            /* flex-direction: column;
+            text-align: center; */
+            text-align: center;
+        }
+        .align-left{
+            /* flex-direction: row; */
+            text-align: left;
+        }
+        .align-right{
+            /* flex-direction: row-reverse; */
+            text-align: right;
+        }
+        .sub-header{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: {{section.settings.color_bg}};
+            padding: 0 20px;
+        }
+        .sub-header__text{
+            padding: 7px;
+            margin-bottom: 0;
+            color: {{section.settings.color_txt}};
+            font-size: 14px;
+        }
+
+        @media screen and (max-width: 740px){
+            .sub-header{
+                padding: 0;
+            }
+
+            .sub-header__text{
+                padding: 8px;
+            }
+        }
+        .sub-header__left{
+            /* border: 1px solid #000; */
+            width: 100%;
+        }
+        .sub-header__right{
+            /* border: 1px solid #000; */
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+        }
+    </style>
+
+    {% if section.settings.price_underline == "underline" %}
+        <style>
+            .sub-header__underline{
+                padding: 0 2px 0 1px;
+                border-bottom: 1px solid {{section.settings.color_txt}};
+            }    
+        </style>
+    {% endif %}
+    {% if section.settings.show_price == false %}
+        <style>
+            .sub-header__underline{
+                display: none;
+            }    
+        </style>
+    {% endif %}
+
+
+{% schema %}
+{
+    "name": {
+        "en": "Sub Header"
+    },
+    "settings": [
+        {
+            "type": "text",
+            "id": "text_sub-header",
+            "label": {
+                "en": "Text",
+                "vi": "Văn bản"
+            },
+            "default": {
+                "en": "Free shipping on all orders over $300",
+                "vi": "Chào mừng đến cửa hàng của tôi"
+            }
+        },
+        {
+            "type": "color",
+            "id": "color_bg",
+            "label": {
+                "en": "Color background",
+                "vi": "Màu nền"
+            },
+            "default": "#222222"
+        },
+        {
+            "type": "color",
+            "id": "color_txt",
+            "label": {
+                "en": "Color text",
+                "vi": "Màu chữ"
+            },
+            "default": "#fff"
+        },
+        {
+            "type": "radio",
+            "id": "align_text",
+            "label": {
+                "en": "Text alignment",
+                "vi": "Căn chỉnh chữ"
+            },
+            "default": "center",
+            "options": [
+                {
+                    "value": "left",
+                    "label": {
+                        "en": "Left",
+                        "vi": "Trái"
+                    }
+                },
+                {
+                    "value": "center",
+                    "label": {
+                        "en": "Centered",
+                        "vi": "Giữa"
+                    }
+                },
+                {
+                    "value": "right",
+                    "label": {
+                        "en": "Right",
+                        "vi": "Phải"
+                    }
+                }
+            ]
+        },
+        {
+            "type": "checkbox",
+            "id": "show_price",
+            "label": {
+                "en": "Show price"
+            },
+            "default": true
+        },
+        {
+            "type": "radio",
+            "id": "price_underline",
+            "label": {
+                "en": "Price underline"
+            },
+            "default": "underline",
+            "options": [
+                {
+                    "value": "underline",
+                    "label": {
+                        "en": "Underline",
+                        "vi": "Gạch chân"
+                    }
+                },
+                {
+                    "value": "none",
+                    "label": {
+                        "en": "None",
+                        "vi": "Không"
+                    }
+                }
+            ]
+        },
+        {
+            "type": "range",
+            "id": "price",
+            "label": {
+                "en": "Price",
+                "vi": "Giá"
+            },
+            "min": 0,
+            "max": 1000,
+            "step": 10,
+            "default": 300
+            
+        }
+    ]
+}
+{% endschema %}

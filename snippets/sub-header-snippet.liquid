@@ -1,0 +1,15 @@
+{%- comment -%}
+<!-- variable bên snippet:{{ cc }} -->
+{%- endcomment -%}
+
+<div class="sub-header {{sub-header-classes}}">
+    <div class="sub-header__left">
+        <p class="sub-header__text">{{section.settings.text_sub-header}} <span class="sub-header__underline">${{section.settings.price}}</span></p>
+    </div>
+    {%- comment -%}
+        <div class="sub-header__right">
+            <p class="sub-header__text">CC</p>
+            <p class="sub-header__text">Login</p>
+        </div>
+    {%- endcomment -%}
+</div>
