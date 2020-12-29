@@ -6,40 +6,41 @@
     {% endif %}
     {% assign wrapper_height = 100 | divided_by: min_aspect_ratio %}
 {% endif %}
-
-{% style %}
-    .hero-section {
-        height: {{ wrapper_height }}vw !important;
+{%- style -%}
+    .hero--adapt{
+      height: {{- wrapper_height -}}vw !important;
     }
-{% endstyle %}
-
+{%- endstyle -%}
 <style>
     .hero-container {
-        *zoom: 1;
         max-width: 1200px;
         margin: 0 auto; 
     }
-    .hero-container::after{
-        content: '';
-        display: table;
-        clear: both;
+    .hero-layout{
+        background-size: cover;
+        width: 100%;
+        position: relative;
+        height: 475px;
+        width: 100%;
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: 50% 50%; 
     }
-    .hero-fixed{
+    .hero-overlay{
         position: relative;
     }
-    .hero-fixed::after{
+    .hero-overlay::after{
         content: '';
         position: absolute;
         top: 0;
         right: 0;
         bottom: 0;
         left: 0;
-        background-color: rgba(0, 0, 0, .3);
-        /* background-color: var(--color-image-overlay);
-        opacity: var(--opacity-image-overlay); */
+        background-color: rgba(0, 0, 0, .4);
         z-index: 1;
     }
-    .hero-fixed__content{
+    .hero-fixed__content,
+    .hero-inner{
         overflow: hidden;
         position: absolute;
         top: 50%;
@@ -50,11 +51,11 @@
         -webkit-transform: translateY(-50%);
         transform: translateY(-50%);
         display: flex;
-        justify-content: center;
+        /* justify-content: center; */
         align-items: center;
     }
     .hero-text__container{
-        text-align: center;
+        /* text-align: center; */
         padding: 0 20px;
         width: 50%;
     }
@@ -68,6 +69,21 @@
         color: #fff;
         font-size: 18px;
         margin-bottom: 20px;
+    }
+    .hero--xs{
+        height: 200px;
+    }
+    .hero--s{
+        height: 320px;
+    }
+    .hero--m{
+        height: 450px;
+    }
+    .hero--l{
+        height: 550px;
+    }
+    .hero--xl{
+        height: 680px;
     }
     
     @media only screen and (max-width: 1300px){
@@ -88,6 +104,21 @@
         .hero-text p{
             font-size: 16px;
         }
+        .hero--xs{
+            height: 200px;
+        }
+        .hero--s{
+            height: 220px;
+        }
+        .hero--m{
+            height: 330px;
+        }
+        .hero--l{
+            height: 420px;
+        }
+        .hero--xl{
+            height: 480px;
+        }
     }
 </style>
 
@@ -98,11 +129,42 @@
     {% if section.settings.layout_hero == 'fixed-width' and section.settings.hero_height == "adapt" %}
         {% assign slide_width = 1090 %}
         {% assign min_aspect_ratio = section.settings.image.aspect_ratio | default: 2.0 %}
-            <div class="hero-fixed hero--adapt" 
+            <div class="hero-overlay hero--adapt" 
             data-layout="{{ section.settings.layout_hero }}">
             {%- assign img_url = section.settings.image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
             {% if section.settings.image.width < max_width %}
                 {% assign slide_width = section.settings.image.width %}
+            {% endif %}
+            {% if section.settings.align_text == 'center' %}
+                {%- style -%}
+                    .hero-fixed__content,
+                    .hero-inner{
+                        justify-content: center;
+                    }
+                    .hero-text__container{
+                        text-align: center;
+                    }
+                {%- endstyle -%}
+            {% elsif section.settings.align_text == 'left' %}
+                {%- style -%}
+                    .hero-fixed__content,
+                    .hero-inner{
+                        justify-content: flex-start;
+                    }
+                    .hero-text__container{
+                        text-align: left;
+                    }
+                {%- endstyle -%}
+            {% else %}
+                {%- style -%}
+                    .hero-fixed__content,
+                    .hero-inner{
+                        justify-content: flex-end;
+                    }
+                    .hero-text__container{
+                        text-align: right;
+                    }
+                {%- endstyle -%}
             {% endif %}
                 <div class="hero-fixed__content">
                     <div class="hero-text__container">
@@ -135,7 +197,6 @@
                                 {% endif %}
                                 object-position: {{ section.settings.align }};"
                          alt="{{ section.settings.image.alt | escape }}">
-                        
                 {% else %}
                     <span>
                         {% capture current %}{% cycle 1, 2 %}{% endcapture %}
@@ -144,59 +205,80 @@
                 {% endif %}
             </div>
     {% else %}
-    <div class="hero hero--{{ section.settings.hero_height }} hero-{{ section.id }}{% if section.settings.title != blank or section.settings.text != blank or section.settings.btn_label != blank %} hero__overlay{% endif %} box ratio-container lazyload js"
-    id="Hero-{{ section.id }}"
-    data-layout="{{ section.settings.layout_hero }}"
-    {%- if section.settings.image -%}
-     {% unless section.settings.image.alt == blank %}
-     role="img"
-     aria-label="{{ section.settings.image.alt | escape }}"
-     data-alt="{{ section.settings.image.alt | escape }}"
-     {% endunless %}
-    data-bg="{{ section.settings.image | img_url: '300x300' }}"
-    data-bgset="{% include 'bgset', image: section.settings.image %}"
-    data-sizes="auto"
-    data-parent-fit="cover"
-    style="background-position: {{ section.settings.align }};"
-    data-image-loading-animation
-    {%- endif -%}>
-{%- if section.settings.image == blank -%}
- <div class="placeholder-background">
-   {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg' }}
- </div>
-{%- endif -%}
- <div class="hero__inner">
-   <div class="page-width text-center">
-     {%- if section.settings.title != blank -%}
-       <h2 class="h1 mega-title{% if section.settings.text_size == 'large' %} mega-title--large{% endif %}">{{ section.settings.title | escape }}</h2>
-     {%- endif -%}
-     {%- if section.settings.text != blank -%}
-       <div class="rte-setting mega-subtitle{% if section.settings.text_size == 'large' %} mega-subtitle--large{% endif %}">{{ section.settings.text }}</div>
-     {%- endif -%}
-     {%- if section.settings.btn_label != blank and section.settings.btn_link != blank -%}
-       {%- capture ariaLabel -%}
-         {{- section.settings.btn_label -}}
-         {%- if section.settings.btn_link.type == 'frontpage_link' -%}
-           : {{ 'homepage.general.title' | t -}}
-         {%- elsif section.settings.btn_link.type == 'catalog_link' -%}
-           : {{ 'collections.catalog.title' | t -}}
-         {%- elsif section.settings.btn_link.object.title -%}
-           : {{ section.settings.btn_link.object.title -}}
-         {%- endif -%}
-       {%- endcapture -%}
-
-       <a href="{{ section.settings.btn_link }}"
-         class="btn hero__btn"
-         aria-label="{{ ariaLabel }}">
-         {{- section.settings.button_label | escape -}}
-       </a>
-     {%- endif -%}
-   </div>
- </div>
-</div>
-<noscript>
- <div class="hero hero--{{ section.settings.hero_size }}{% if section.settings.title != blank or section.settings.text != blank or section.settings.button_label != blank %} hero__overlay{% endif %}"{% if section.settings.image %}{% unless section.settings.image.alt == blank %} role="img" aria-label="{{ section.settings.image.alt | escape }}"{% endunless %} style="background-image: url('{{ section.settings.image | img_url: '2048x' }}'); background-position: center {{ section.settings.alignment }};"{% endif %}></div>
-</noscript>
+    <div class="hero-layout hero--{{ section.settings.hero_height }} lazyload {% if section.settings.title != blank or section.settings.text != blank or section.settings.btn_label != blank %} hero-overlay {% endif %}"
+         data-layout="{{ section.settings.layout_hero }}"
+         {%- if section.settings.image -%}
+            {% unless section.settings.image.alt == blank %}
+            role="img"
+            aria-label="{{ section.settings.image.alt | escape }}"
+            data-alt="{{ section.settings.image.alt | escape }}"
+            {% endunless %}
+         data-bg="{{ section.settings.image | img_url: '300x300' }}"
+         data-bgset="{% include 'bgset', image: section.settings.image %}"
+         data-sizes="auto"
+         data-parent-fit="cover"
+         style="background-position: {{ section.settings.align }};"
+         data-image-loading-animation
+        {%- endif -%}>
+        {%- if section.settings.image == blank -%}
+            <div class="placeholder-background">
+            {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg' }}
+            </div>
+        {%- endif -%}
+        {% if section.settings.align_text == 'center' %}
+            {%- style -%}
+                .hero-fixed__content,
+                .hero-inner{
+                    justify-content: center;
+                }
+                .hero-text__container{
+                    text-align: center;
+                }
+            {%- endstyle -%}
+        {% elsif section.settings.align_text == 'left' %}
+            {%- style -%}
+                .hero-fixed__content,
+                .hero-inner{
+                    justify-content: flex-start;
+                }
+                .hero-text__container{
+                    text-align: left;
+                }
+            {%- endstyle -%}
+        {% else %}
+            {%- style -%}
+                .hero-fixed__content,
+                .hero-inner{
+                    justify-content: flex-end;
+                }
+                .hero-text__container{
+                    text-align: right;
+                }
+            {%- endstyle -%}
+        {% endif %}
+        <div class="hero-inner">
+            <div class="hero-text__container">
+                    {% if section.settings.title != blank %}
+                        <h2 class="hero-title">
+                            {{section.settings.title | escape}}
+                        </h2>
+                    {% endif %}
+                    {% if section.settings.text != blank %}
+                    <div class="hero-text">
+                        {{section.settings.text}}
+                    </div>
+                    {% endif %}
+                    {% if section.settings.btn_label != blank and section.settings.btn_link != blank %}
+                        <a href="{{section.settings.btn_link}}" class="btn hero_btn-link">
+                            {{ section.settings.btn_label | escape }}
+                        </a>
+                    {% endif %}
+            </div>
+        </div>
+    </div>  
+    <noscript>
+    <div class="hero hero--{{ section.settings.hero_size }}{% if section.settings.title != blank or section.settings.text != blank or section.settings.button_label != blank %} hero__overlay{% endif %}"{% if section.settings.image %}{% unless section.settings.image.alt == blank %} role="img" aria-label="{{ section.settings.image.alt | escape }}"{% endunless %} style="background-image: url('{{ section.settings.image | img_url: '2048x' }}'); background-position: center {{ section.settings.alignment }};"{% endif %}></div>
+    </noscript>
     {% endif %}
     {% if section.settings.layout_hero == 'fixed-width' %}
         </div>
@@ -248,7 +330,7 @@
             "type": "select",
             "id": "layout_hero",
             "label": {
-                "en": "layout"
+                "en": "Layout"
             },
             "default": "fixed-width",
             "options": [
@@ -281,31 +363,31 @@
                     }
                 },
                 {
-                    "value": "extra-small",
+                    "value": "xs",
                     "label": {
                         "en": "Extra small"
                     }
                 },
                 {
-                    "value": "small",
+                    "value": "s",
                     "label": {
                         "en": "Small"
                     }
                 },
                 {
-                    "value": "medium",
+                    "value": "m",
                     "label": {
                         "en": "Medium"
                     }
                 },
                 {
-                    "value": "large",
+                    "value": "l",
                     "label": {
                         "en": "Large"
                     }
                 },
                 {
-                    "value": "extra-large",
+                    "value": "xl",
                     "label": {
                         "en": "Extra large"
                     }
@@ -332,7 +414,34 @@
                 "en": "<p>Don't miss our need-it-now edit - these styles won't hang around long!</p>"
             }
         },
-        
+        {
+            "type": "radio",
+            "id": "align_text",
+            "label": {
+                "en": "Text align"
+            },
+            "default": "center",
+            "options": [
+                {
+                    "value": "left",
+                    "label": {
+                        "en": "Left"
+                    }
+                },
+                {
+                    "value": "center",
+                    "label": {
+                        "en": "Center"
+                    }
+                },
+                {
+                    "value": "right",
+                    "label": {
+                        "en": "Right"
+                    }
+                }
+            ]
+        },
         {
             "type": "text",
             "id": "btn_label",
