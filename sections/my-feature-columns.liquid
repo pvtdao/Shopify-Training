@@ -1,0 +1,211 @@
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700&display=swap');
+    .wrapper{
+        max-width: 1200px;
+        margin: 0 auto;
+        padding-top: 30px;
+    }
+    .section-title{
+        /* font-size: 30px; */
+        margin-bottom: 20px;
+        text-align: center;
+    }
+    .grid__item-title{
+        font-size: 18px;
+        color: #222222;
+        line-height: 1.1;
+        text-align: center;
+        font-family: Roboto;
+        font-weight: 400;
+        font-style: normal;
+    }
+    .my-image{
+        overflow: hidden;
+        
+    }
+    .my-image img{
+        transition: transform .5s cubic-bezier(0.55, 0.09, 0.68, 0.53);
+    }
+    .my-image:hover img{
+        transform: scale(1.1);
+    }
+
+    @media only screen and (max-width: 1300px){
+        .wrapper{
+            padding: 20px 20px 0;
+        }
+    }
+</style>
+
+<div class="wrapper">
+    {% if section.settings.title != blank %}
+        <h2 class="section-title"> {{ section.settings.title }} </h2>
+    {% endif %}
+
+    <!-- Grid bự chứa cái grid item -->
+    <div class="grid">
+        <!-- giá trị rộng mặc định của grid item -->
+        {% assign grid_item-w = 'medium-up--one-third' %}
+        <!-- Giá trị cao tối đa của hình -->
+        {% assign max-height = 345 %}
+
+        <!-- Tùy số lượng column item mà grid item
+             sẽ có chiều rộng khác nhau và img sẽ có max height khác nhau -->
+        {% case section.blocks.size %}
+            {% when 1 %}
+                {%- assign grid_item-w = 'medium-up--one-whole' -%}
+                {%- assign max-height = 530 -%}
+            {% when 2 %}
+                {%- assign grid_item-w = 'medium-up--one-half' -%}
+                {%- assign max-height = 530 -%}
+            {% when 4 %}
+                {%- assign grid_item-w = 'medium-up--one-half' -%}
+                {%- assign max-height = 530 -%}
+        {% endcase %}
+
+        <!-- Lặp qua từng block -->
+        {% for block in section.blocks %}
+            {% if section.blocks.size == 5 and forloop.index < 3 %}
+                {%- assign column_w = 'medium-up--one-half' -%}
+                {%- assign max-height = 530 -%}
+            {% else %}
+                {% assign column_w = grid_item-w %}    
+            {% endif %}
+            
+            
+
+            <div class="grid__item {{ column_w }} my-grid__item">
+                {% if block.settings.show_image %}
+                   {% if block.settings.image != blank %}
+                       {%- assign img_url = block.settings.image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+                        {% include 'image-style', image: block.settings.image, height: max_height %}
+                        <div class="feature-row__image-wrapper my-image">
+                            <div style="padding-top:{{ 1 | divided_by: block.settings.image.aspect_ratio | times: 100}}%;" data-image-loading-animation>
+                                <img class="feature-row__image lazyload"
+                                     data-src="{{ img_url }}"
+                                     data-widths="[180, 360, 540, 720, 900, 1080, 1296, 1512, 1728, 2048]"
+                                     data-aspectratio="{{ block.settings.image.aspect_ratio }}"
+                                     data-sizes="auto"
+                                     alt="{{ block.settings.image.alt | escape }}">
+                            </div>
+                        </div>
+                        <noscript>
+                            <p>
+                              {{ block.settings.image | img_url: '480x480', scale: 2 | img_tag: block.settings.image.alt, 'feature-row__image' }}
+                            </p>
+                        </noscript>
+                    {% else %}
+                        <p>
+                            {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+                        </p>
+                    {% endif %}
+                {% endif %}
+                {% if block.settings.title != blank %}
+                    <h3 class="grid__item-title">
+                        {{ block.settings.title | escape }}
+                    </h3>
+                    {% style %}
+                        .grid__item-title{
+                            text-align: {{ block.settings.title_align}}
+                        }
+                    {% endstyle %}
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+
+    {% if section.blocks.size == 0 %}
+        {% include 'no-blocks' %}
+    {% endif %}
+</div>
+
+
+
+
+
+{% schema %}
+{
+    "name": {
+        "en": "Text columns with image"
+    },
+    "settings": [
+        {
+            "type": "text",
+            "id": "title",
+            "label": {
+                "en": "Title"
+            }
+        }
+    ],
+    "blocks": [
+        {
+            "type": "text_block",
+            "name": {
+                "en": "New column"
+            },
+            "settings": [
+                {
+                    "type": "checkbox",
+                    "id": "show_image",
+                    "label": {
+                        "en": "Show image"
+                    },
+                    "default": true
+                },
+                {
+                    "type": "image_picker",
+                    "id": "image",
+                    "label": {
+                        "en": "Image"
+                    }
+                },
+                {
+                    "type": "text",
+                    "id": "title",
+                    "label": {
+                        "en": "Heading"
+                    }
+                },
+                {
+                    "type": "radio",
+                    "id": "title_align",
+                    "label": {
+                        "en": "Align title"
+                    },
+                    "default": "center",
+                    "options": [
+                        {
+                            "value": "left",
+                            "label": {
+                                "en": "Left"
+                            }
+                        },
+                        {
+                            "value": "center",
+                            "label": {
+                                "en": "Center"
+                            }
+                        },
+                        {
+                            "value": "right",
+                            "label": {
+                                "en": "Right"
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "presets": [
+        {
+            "name": {
+                "en": "My text column with image"
+            },
+            "category": {
+                "en": "Text"
+            }
+        }
+    ]
+}
+{% endschema %}

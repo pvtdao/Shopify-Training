@@ -4,7 +4,11 @@
 
 <div class="sub-header {{sub-header-classes}}">
     <div class="sub-header__left">
-        <p class="sub-header__text">{{section.settings.text_sub-header}} <span class="sub-header__underline">${{section.settings.price}}</span></p>
+        <p class="sub-header__text">{{section.settings.text_sub-header}} 
+            {% if section.settings.link_label != blank and section.settings.link != blank %}
+                <a class="sub-header__underline" href="{{section.settings.link}}">{{section.settings.link_label}}</a>
+            {% endif %}
+        </p>
     </div>
     {%- comment -%}
         <div class="sub-header__right">
